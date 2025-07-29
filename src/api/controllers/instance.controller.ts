@@ -69,6 +69,7 @@ export class InstanceController {
         hash,
         number: instanceData.number,
         businessId: instanceData.businessId,
+        userId: instanceData.userId,
         status: instanceData.status,
       });
 
@@ -367,7 +368,7 @@ export class InstanceController {
     };
   }
 
-  public async fetchInstances({ instanceName, instanceId, number }: InstanceDto, key: string) {
+  public async fetchInstances({ instanceName, instanceId, number, userId }: InstanceDto, key: string) {
     const env = this.configService.get<Auth>('AUTHENTICATION').API_KEY;
 
     if (env.KEY !== key) {
@@ -376,6 +377,7 @@ export class InstanceController {
           token: key,
           name: instanceName || undefined,
           id: instanceId || undefined,
+          userId: userId || undefined,
         },
       });
 
