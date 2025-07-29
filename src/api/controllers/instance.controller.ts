@@ -369,6 +369,71 @@ export class InstanceController {
     };
   }
 
+  public async getSingleInstance({ instanceName, instanceId }: InstanceDto, key: string) {
+    const env = this.configService.get<Auth>('AUTHENTICATION').API_KEY;
+
+    if (env.KEY !== key) {
+      const instanceByKey = await this.prismaRepository.instance.findFirst({
+        where: {
+          token: key,
+          OR: [{ name: instanceName || undefined }, { id: instanceId || undefined }],
+        },
+        include: {
+          Chatwoot: true,
+          Proxy: true,
+          Rabbitmq: true,
+          Nats: true,
+          Sqs: true,
+          Websocket: true,
+          Setting: true,
+          _count: {
+            select: {
+              Message: true,
+              Contact: true,
+              Chat: true,
+            },
+          },
+        },
+      });
+
+      if (!instanceByKey) {
+        throw new UnauthorizedException();
+      }
+
+      return instanceByKey;
+    }
+
+    const clientName = this.configService.get<Database>('DATABASE').CONNECTION.CLIENT_NAME;
+    const instance = await this.prismaRepository.instance.findFirst({
+      where: {
+        OR: [{ name: instanceName || undefined }, { id: instanceId || undefined }],
+        clientName,
+      },
+      include: {
+        Chatwoot: true,
+        Proxy: true,
+        Rabbitmq: true,
+        Nats: true,
+        Sqs: true,
+        Websocket: true,
+        Setting: true,
+        _count: {
+          select: {
+            Message: true,
+            Contact: true,
+            Chat: true,
+          },
+        },
+      },
+    });
+
+    if (!instance) {
+      throw new BadRequestException('Instance not found');
+    }
+
+    return instance;
+  }
+
   public async fetchInstances({ instanceName, instanceId, number, userId }: InstanceDto, key: string) {
     const env = this.configService.get<Auth>('AUTHENTICATION').API_KEY;
 
