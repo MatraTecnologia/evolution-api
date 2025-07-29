@@ -35,6 +35,7 @@ export abstract class RouterBroker {
 
     if (request?.query && Object.keys(request.query).length > 0) {
       Object.assign(instance, request.query);
+      Object.assign(ref, request.query);
     }
 
     if (request.originalUrl.includes('/instance/create')) {

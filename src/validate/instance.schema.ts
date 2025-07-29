@@ -216,6 +216,16 @@ export const instanceSchema: JSONSchema7 = {
   ...isNotEmpty('instanceName'),
 };
 
+export const getSingleInstanceSchema: JSONSchema7 = {
+  $id: v4(),
+  type: 'object',
+  properties: {
+    instanceName: { type: 'string', minLength: 1 },
+    instanceId: { type: 'string', minLength: 1 },
+  },
+  anyOf: [{ required: ['instanceName'] }, { required: ['instanceId'] }],
+};
+
 export const presenceOnlySchema: JSONSchema7 = {
   $id: v4(),
   type: 'object',
