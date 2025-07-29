@@ -7,7 +7,7 @@ import { CacheService } from '@api/services/cache.service';
 import { WAMonitoringService } from '@api/services/monitor.service';
 import { SettingsService } from '@api/services/settings.service';
 import { Events, Integration, wa } from '@api/types/wa.types';
-import { Auth, Chatwoot, ConfigService, HttpServer, WaBusiness } from '@config/env.config';
+import { Auth, Chatwoot, ConfigService, Database, HttpServer, WaBusiness } from '@config/env.config';
 import { Logger } from '@config/logger.config';
 import { BadRequestException, InternalServerErrorException, UnauthorizedException } from '@exceptions';
 import { delay } from 'baileys';
@@ -393,6 +393,35 @@ export class InstanceController {
 
     if (instanceId || number) {
       return this.waMonitor.instanceInfoById(instanceId, number);
+    }
+
+    if (userId || instanceName) {
+      const clientName = this.configService.get<Database>('DATABASE').CONNECTION.CLIENT_NAME;
+      const instances = await this.prismaRepository.instance.findMany({
+        where: {
+          name: instanceName || undefined,
+          userId: userId || undefined,
+          clientName,
+        },
+        include: {
+          Chatwoot: true,
+          Proxy: true,
+          Rabbitmq: true,
+          Nats: true,
+          Sqs: true,
+          Websocket: true,
+          Setting: true,
+          _count: {
+            select: {
+              Message: true,
+              Contact: true,
+              Chat: true,
+            },
+          },
+        },
+      });
+
+      return instances;
     }
 
     const instanceNames = instanceName ? [instanceName] : null;
