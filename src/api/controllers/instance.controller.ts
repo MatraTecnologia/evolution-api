@@ -71,6 +71,7 @@ export class InstanceController {
         number: instanceData.number,
         businessId: instanceData.businessId,
         userId: instanceData.userId,
+        workspaceId: instanceData.workspaceId,
         status: instanceData.status,
       });
 
@@ -434,7 +435,7 @@ export class InstanceController {
     return instance;
   }
 
-  public async fetchInstances({ instanceName, instanceId, number, userId }: InstanceDto, key: string) {
+  public async fetchInstances({ instanceName, instanceId, number, userId, workspaceId }: InstanceDto, key: string) {
     const env = this.configService.get<Auth>('AUTHENTICATION').API_KEY;
 
     if (env.KEY !== key) {
@@ -444,6 +445,7 @@ export class InstanceController {
           name: instanceName || undefined,
           id: instanceId || undefined,
           userId: userId || undefined,
+          workspaceId: workspaceId || undefined,
         },
       });
 
@@ -460,12 +462,13 @@ export class InstanceController {
       return this.waMonitor.instanceInfoById(instanceId, number);
     }
 
-    if (userId || instanceName) {
+    if (userId || instanceName || workspaceId) {
       const clientName = this.configService.get<Database>('DATABASE').CONNECTION.CLIENT_NAME;
       const instances = await this.prismaRepository.instance.findMany({
         where: {
           name: instanceName || undefined,
           userId: userId || undefined,
+          workspaceId: workspaceId || undefined,
           clientName,
         },
         include: {

@@ -200,6 +200,8 @@ export const instanceSchema: JSONSchema7 = {
         ],
       },
     },
+    // User/Workspace
+    workspaceId: { type: 'string' },
     // Chatwoot
     chatwootAccountId: { type: 'string' },
     chatwootToken: { type: 'string' },

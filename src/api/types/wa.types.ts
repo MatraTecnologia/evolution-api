@@ -60,6 +60,7 @@ export declare namespace wa {
     integration?: string;
     businessId?: string;
     userId?: string;
+    workspaceId?: string;
   };
 
   export type LocalChatwoot = {

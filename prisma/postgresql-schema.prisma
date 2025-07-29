@@ -74,6 +74,7 @@ model Instance {
   token                   String?                  @db.VarChar(255)
   clientName              String?                  @db.VarChar(100)
   userId                  String?                  @db.VarChar(255)
+  workspaceId             String?                  @db.VarChar(255)
   disconnectionReasonCode Int?                     @db.Integer
   disconnectionObject     Json?                    @db.JsonB
   disconnectionAt         DateTime?                @db.Timestamp
