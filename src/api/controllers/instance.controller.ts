@@ -63,6 +63,7 @@ export class InstanceController {
         instanceId,
         integration: instanceData.integration,
         instanceName: instanceData.instanceName,
+        description: instanceData.description,
         ownerJid: instanceData.ownerJid,
         profileName: instanceData.profileName,
         profilePicUrl: instanceData.profilePicUrl,

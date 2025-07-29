@@ -63,6 +63,7 @@ enum DifyBotType {
 model Instance {
   id                      String                   @id @default(cuid())
   name                    String                   @unique @db.VarChar(255)
+  description             String?                  @db.VarChar(255)
   connectionStatus        InstanceConnectionStatus @default(open)
   ownerJid                String?                  @db.VarChar(100)
   profileName             String?                  @db.VarChar(100)

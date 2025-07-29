@@ -224,6 +224,7 @@ export class WAMonitoringService {
         data: {
           id: data.instanceId,
           name: data.instanceName,
+          description: data.description,
           ownerJid: data.ownerJid,
           profileName: data.profileName,
           profilePicUrl: data.profilePicUrl,
