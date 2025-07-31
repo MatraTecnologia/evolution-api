@@ -556,14 +556,14 @@ export class InstanceController {
         data: { description: data.description },
       });
 
-      return { 
-        status: 'SUCCESS', 
-        error: false, 
-        response: { 
+      return {
+        status: 'SUCCESS',
+        error: false,
+        response: {
           message: 'Instance description updated successfully',
           instanceName,
-          description: data.description 
-        } 
+          description: data.description,
+        },
       };
     } catch (error) {
       this.logger.error(error);

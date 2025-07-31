@@ -2,7 +2,12 @@ import { RouterBroker } from '@api/abstract/abstract.router';
 import { InstanceDto, SetPresenceDto, UpdateInstanceDescriptionDto } from '@api/dto/instance.dto';
 import { instanceController } from '@api/server.module';
 import { ConfigService } from '@config/env.config';
-import { getSingleInstanceSchema, instanceSchema, presenceOnlySchema, updateInstanceDescriptionSchema } from '@validate/validate.schema';
+import {
+  getSingleInstanceSchema,
+  instanceSchema,
+  presenceOnlySchema,
+  updateInstanceDescriptionSchema,
+} from '@validate/validate.schema';
 import { RequestHandler, Router } from 'express';
 
 import { HttpStatus } from './index.router';
