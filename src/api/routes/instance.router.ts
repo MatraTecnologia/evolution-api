@@ -1,8 +1,8 @@
 import { RouterBroker } from '@api/abstract/abstract.router';
-import { InstanceDto, SetPresenceDto } from '@api/dto/instance.dto';
+import { InstanceDto, SetPresenceDto, UpdateInstanceDescriptionDto } from '@api/dto/instance.dto';
 import { instanceController } from '@api/server.module';
 import { ConfigService } from '@config/env.config';
-import { getSingleInstanceSchema, instanceSchema, presenceOnlySchema } from '@validate/validate.schema';
+import { getSingleInstanceSchema, instanceSchema, presenceOnlySchema, updateInstanceDescriptionSchema } from '@validate/validate.schema';
 import { RequestHandler, Router } from 'express';
 
 import { HttpStatus } from './index.router';
@@ -87,6 +87,16 @@ export class InstanceRouter extends RouterBroker {
         });
 
         return res.status(HttpStatus.CREATED).json(response);
+      })
+      .put(this.routerPath('updateDescription'), ...guards, async (req, res) => {
+        const response = await this.dataValidate<UpdateInstanceDescriptionDto>({
+          request: req,
+          schema: updateInstanceDescriptionSchema,
+          ClassRef: UpdateInstanceDescriptionDto,
+          execute: (instance, data) => instanceController.updateDescription(instance, data),
+        });
+
+        return res.status(HttpStatus.OK).json(response);
       })
       .delete(this.routerPath('logout'), ...guards, async (req, res) => {
         const response = await this.dataValidate<InstanceDto>({

@@ -239,3 +239,16 @@ export const presenceOnlySchema: JSONSchema7 = {
   },
   required: ['presence'],
 };
+
+export const updateInstanceDescriptionSchema: JSONSchema7 = {
+  $id: v4(),
+  type: 'object',
+  properties: {
+    description: { 
+      type: 'string',
+      maxLength: 255,
+      description: 'Instance description'
+    },
+  },
+  required: ['description'],
+};

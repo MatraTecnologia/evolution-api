@@ -1,4 +1,4 @@
-import { InstanceDto, SetPresenceDto } from '@api/dto/instance.dto';
+import { InstanceDto, SetPresenceDto, UpdateInstanceDescriptionDto } from '@api/dto/instance.dto';
 import { ChatwootService } from '@api/integrations/chatbot/chatwoot/services/chatwoot.service';
 import { ProviderFiles } from '@api/provider/sessions';
 import { PrismaRepository } from '@api/repository/repository.service';
@@ -539,6 +539,34 @@ export class InstanceController {
       this.eventEmitter.emit('remove.instance', instanceName, 'inner');
       return { status: 'SUCCESS', error: false, response: { message: 'Instance deleted' } };
     } catch (error) {
+      throw new BadRequestException(error.toString());
+    }
+  }
+
+  public async updateDescription({ instanceName }: InstanceDto, data: UpdateInstanceDescriptionDto) {
+    try {
+      const instance = this.waMonitor.waInstances[instanceName];
+
+      if (!instance) {
+        throw new BadRequestException('Instance not found');
+      }
+
+      await this.prismaRepository.instance.update({
+        where: { name: instanceName },
+        data: { description: data.description },
+      });
+
+      return { 
+        status: 'SUCCESS', 
+        error: false, 
+        response: { 
+          message: 'Instance description updated successfully',
+          instanceName,
+          description: data.description 
+        } 
+      };
+    } catch (error) {
+      this.logger.error(error);
       throw new BadRequestException(error.toString());
     }
   }

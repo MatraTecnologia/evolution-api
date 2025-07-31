@@ -59,3 +59,7 @@ export class InstanceDto extends IntegrationDto {
 export class SetPresenceDto {
   presence: WAPresence;
 }
+
+export class UpdateInstanceDescriptionDto {
+  description?: string;
+}
