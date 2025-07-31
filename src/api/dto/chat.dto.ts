@@ -86,6 +86,10 @@ export class MarkChatUnreadDto {
   chat?: string;
 }
 
+export class MarkAllMessagesReadDto {
+  chat: string;
+}
+
 export class PrivacySettingDto {
   readreceipts: WAReadReceiptsValue;
   profile: WAPrivacyValue;

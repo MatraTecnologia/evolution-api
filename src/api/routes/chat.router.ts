@@ -4,6 +4,7 @@ import {
   BlockUserDto,
   DeleteMessage,
   getBase64FromMediaMessageDto,
+  MarkAllMessagesReadDto,
   MarkChatUnreadDto,
   NumberDto,
   PrivacySettingDto,
@@ -24,6 +25,7 @@ import {
   blockUserSchema,
   contactValidateSchema,
   deleteMessageSchema,
+  markAllMessagesReadSchema,
   markChatUnreadSchema,
   messageUpSchema,
   messageValidateSchema,
@@ -86,6 +88,16 @@ export class ChatRouter extends RouterBroker {
           schema: markChatUnreadSchema,
           ClassRef: MarkChatUnreadDto,
           execute: (instance, data) => chatController.markChatUnread(instance, data),
+        });
+
+        return res.status(HttpStatus.CREATED).json(response);
+      })
+      .post(this.routerPath('markAllMessagesRead'), ...guards, async (req, res) => {
+        const response = await this.dataValidate<MarkAllMessagesReadDto>({
+          request: req,
+          schema: markAllMessagesReadSchema,
+          ClassRef: MarkAllMessagesReadDto,
+          execute: (instance, data) => chatController.markAllMessagesRead(instance, data),
         });
 
         return res.status(HttpStatus.CREATED).json(response);

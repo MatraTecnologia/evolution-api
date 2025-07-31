@@ -118,6 +118,16 @@ export const markChatUnreadSchema: JSONSchema7 = {
   required: ['lastMessage'],
 };
 
+export const markAllMessagesReadSchema: JSONSchema7 = {
+  $id: v4(),
+  type: 'object',
+  properties: {
+    chat: { type: 'string' },
+  },
+  required: ['chat'],
+  ...isNotEmpty('chat'),
+};
+
 export const deleteMessageSchema: JSONSchema7 = {
   $id: v4(),
   type: 'object',

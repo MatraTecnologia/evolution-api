@@ -6,6 +6,7 @@ import {
   DeleteMessage,
   getBase64FromMediaMessageDto,
   LastMessage,
+  MarkAllMessagesReadDto,
   MarkChatUnreadDto,
   NumberBusiness,
   OnWhatsAppDto,
@@ -3342,10 +3343,14 @@ export class BaileysStartupService extends ChannelStartupService {
   }
 
   public async getLastMessage(number: string) {
-    const where: any = { key: { remoteJid: number }, instanceId: this.instance.id };
-
     const messages = await this.prismaRepository.message.findMany({
-      where,
+      where: {
+        key: {
+          path: ['remoteJid'],
+          equals: number,
+        },
+        instanceId: this.instance.id,
+      },
       orderBy: { messageTimestamp: 'desc' },
       take: 1,
     });
@@ -3417,6 +3422,26 @@ export class BaileysStartupService extends ChannelStartupService {
       throw new InternalServerErrorException({
         markedChatUnread: false,
         message: ['An error occurred while marked unread the chat. Open a calling.', error.toString()],
+      });
+    }
+  }
+
+  public async markAllMessagesRead(data: MarkAllMessagesReadDto) {
+    try {
+      const number = data.chat;
+      const last_message = await this.getLastMessage(number);
+
+      if (!last_message || Object.keys(last_message).length === 0) {
+        throw new NotFoundException('Last message not found');
+      }
+
+      await this.client.chatModify({ markRead: true, lastMessages: [last_message] }, createJid(number));
+
+      return { chatId: number, allMessagesMarkedRead: true };
+    } catch (error) {
+      throw new InternalServerErrorException({
+        allMessagesMarkedRead: false,
+        message: ['An error occurred while marking all messages as read.', error.toString()],
       });
     }
   }
