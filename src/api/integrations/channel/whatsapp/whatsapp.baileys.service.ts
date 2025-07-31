@@ -3435,6 +3435,23 @@ export class BaileysStartupService extends ChannelStartupService {
         throw new NotFoundException('Last message not found');
       }
 
+      // First, update message status in database from DELIVERY_ACK to READ
+      await this.prismaRepository.message.updateMany({
+        where: {
+          AND: [
+            { key: { path: ['remoteJid'], equals: number } },
+            { key: { path: ['fromMe'], equals: false } },
+            { instanceId: this.instance.id },
+            { OR: [{ status: null }, { status: status[3] }] }, // DELIVERY_ACK or null
+          ],
+        },
+        data: { status: status[4] }, // READ
+      });
+
+      // Update the unread messages counter
+      await this.updateChatUnreadMessages(number);
+
+      // Mark as read in WhatsApp
       await this.client.chatModify({ markRead: true, lastMessages: [last_message] }, createJid(number));
 
       return { chatId: number, allMessagesMarkedRead: true };
@@ -4367,12 +4384,13 @@ export class BaileysStartupService extends ChannelStartupService {
 
   private async updateChatUnreadMessages(remoteJid: string): Promise<number> {
     const [chat, unreadMessages] = await Promise.all([
-      this.prismaRepository.chat.findFirst({ where: { remoteJid } }),
+      this.prismaRepository.chat.findFirst({ where: { remoteJid, instanceId: this.instance.id } }),
       this.prismaRepository.message.count({
         where: {
           AND: [
             { key: { path: ['remoteJid'], equals: remoteJid } },
             { key: { path: ['fromMe'], equals: false } },
+            { instanceId: this.instance.id },
             { status: { equals: status[3] } },
           ],
         },
