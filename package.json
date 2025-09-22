@@ -4,8 +4,12 @@
   "description": "Rest api for communication with WhatsApp",
   "main": "./dist/main.js",
   "type": "commonjs",
-  "prisma":{
-    "schema":"./prisma/postgresql-schema.prisma"
+  "prisma": {
+    "schema": "prisma/schema.prisma"
+  },
+  "engines": {
+    "node": ">=20",
+    "npm": ">=9"
   },
   "scripts": {
     "build": "tsc --noEmit && tsup",
