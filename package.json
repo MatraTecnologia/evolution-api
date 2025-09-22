@@ -17,10 +17,8 @@
     "lint:check": "eslint --ext .ts src",
     "db:generate": "npx prisma generate --schema ./prisma/postgresql-schema.prisma",
     "db:deploy": "rm -rf ./prisma/migrations && cp -r ./prisma/postgresql-migrations ./prisma/migrations && npx prisma migrate deploy --schema ./prisma/postgresql-schema.prisma",
-    "db:deploy:win": "xcopy /E /I prisma\\postgresql-migrations prisma\\migrations && npx prisma migrate deploy --schema prisma\\postgresql-schema.prisma",
     "db:studio": "npx prisma studio --schema ./prisma/postgresql-schema.prisma",
-    "db:migrate:dev": "rm -rf ./prisma/migrations && cp -r ./prisma/postgresql-migrations ./prisma/migrations && npx prisma migrate dev --schema ./prisma/postgresql-schema.prisma && cp -r ./prisma/migrations/* ./prisma/postgresql-migrations",
-    "db:migrate:dev:win": "xcopy /E /I prisma\\postgresql-migrations prisma\\migrations && npx prisma migrate dev --schema prisma\\postgresql-schema.prisma"
+    "db:migrate:dev": "rm -rf ./prisma/migrations && cp -r ./prisma/postgresql-migrations ./prisma/migrations && npx prisma migrate dev --schema ./prisma/postgresql-schema.prisma && cp -r ./prisma/migrations/* ./prisma/postgresql-migrations"
   },
   "repository": {
     "type": "git",
