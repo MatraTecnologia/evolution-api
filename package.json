@@ -20,9 +20,9 @@
     "lint": "eslint --fix --ext .ts src",
     "lint:check": "eslint --ext .ts src",
     "db:generate": "npx prisma generate --schema ./prisma/schema.prisma",
-    "db:deploy": "rm -rf ./prisma/migrations && cp -r ./prisma/postgresql-migrations ./prisma/migrations && npx prisma migrate deploy --schema ./prisma/schema.prisma",
+    "db:deploy": "npx prisma db push --schema ./prisma/schema.prisma",
     "db:studio": "npx prisma studio --schema ./prisma/schema.prisma",
-    "db:migrate:dev": "rm -rf ./prisma/migrations && cp -r ./prisma/postgresql-migrations ./prisma/migrations && npx prisma migrate dev --schema ./prisma/schema.prisma && cp -r ./prisma/migrations/* ./prisma/postgresql-migrations"
+    "db:migrate:dev": "npx prisma db push --schema ./prisma/schema.prisma"
   },
   "repository": {
     "type": "git",
