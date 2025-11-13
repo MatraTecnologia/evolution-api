@@ -244,10 +244,10 @@ export const updateInstanceDescriptionSchema: JSONSchema7 = {
   $id: v4(),
   type: 'object',
   properties: {
-    description: { 
+    description: {
       type: 'string',
       maxLength: 255,
-      description: 'Instance description'
+      description: 'Instance description',
     },
   },
   required: ['description'],
