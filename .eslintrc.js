@@ -31,16 +31,17 @@ module.exports = {
     'import/no-duplicates': 'error',
     'simple-import-sort/imports': 'error',
     'simple-import-sort/exports': 'error',
-    '@typescript-eslint/ban-types': [
-      'error',
-      {
-        extendDefaults: true,
-        types: {
-          '{}': false,
-          Object: false,
-        },
-      },
-    ],
+    // '@typescript-eslint/ban-types' deprecated in v8, replaced by '@typescript-eslint/no-restricted-types'
+    // '@typescript-eslint/ban-types': [
+    //   'error',
+    //   {
+    //     extendDefaults: true,
+    //     types: {
+    //       '{}': false,
+    //       Object: false,
+    //     },
+    //   },
+    // ],
     'prettier/prettier': ['error', { endOfLine: 'auto' }],
   },
 };

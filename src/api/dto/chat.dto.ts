@@ -1,5 +1,6 @@
 import {
   proto,
+  WAMessage,
   WAPresence,
   WAPrivacyGroupAddValue,
   WAPrivacyOnlineValue,
@@ -18,7 +19,7 @@ export class OnWhatsAppDto {
 }
 
 export class getBase64FromMediaMessageDto {
-  message: proto.WebMessageInfo;
+  message: WAMessage;
   convertToMp4?: boolean;
 }
 

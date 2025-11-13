@@ -111,7 +111,7 @@ import makeWASocket, {
   isJidBroadcast,
   isJidGroup,
   isJidNewsletter,
-  isJidUser,
+  isPnUser,
   makeCacheableSignalKeyStore,
   MessageUpsertType,
   MessageUserReceiptUpdate,
@@ -487,7 +487,7 @@ export class BaileysStartupService extends ChannelStartupService {
     try {
       const webMessageInfo = (await this.prismaRepository.message.findMany({
         where: { instanceId: this.instanceId, key: { path: ['id'], equals: key.id } },
-      })) as unknown as proto.IWebMessageInfo[];
+      })) as unknown as WAMessage[];
       if (full) {
         return webMessageInfo[0];
       }
@@ -983,9 +983,10 @@ export class BaileysStartupService extends ChannelStartupService {
             continue;
           }
 
-          if (m.key.remoteJid?.includes('@lid') && m.key.senderPn) {
-            m.key.remoteJid = m.key.senderPn;
-          }
+          // LID handling removed in baileys 7.0.0-rc.6
+          // if (m.key.remoteJid?.includes('@lid') && m.key.senderPn) {
+          //   m.key.remoteJid = m.key.senderPn;
+          // }
 
           if (Long.isLong(m?.messageTimestamp)) {
             m.messageTimestamp = m.messageTimestamp?.toNumber();
@@ -1049,10 +1050,11 @@ export class BaileysStartupService extends ChannelStartupService {
     ) => {
       try {
         for (const received of messages) {
-          if (received.key.remoteJid?.includes('@lid') && received.key.senderPn) {
-            (received.key as { previousRemoteJid?: string | null }).previousRemoteJid = received.key.remoteJid;
-            received.key.remoteJid = received.key.senderPn;
-          }
+          // LID handling removed in baileys 7.0.0-rc.6
+          // if (received.key.remoteJid?.includes('@lid') && received.key.senderPn) {
+          //   (received.key as { previousRemoteJid?: string | null }).previousRemoteJid = received.key.remoteJid;
+          //   received.key.remoteJid = received.key.senderPn;
+          // }
           if (
             received?.messageStubParameters?.some?.((param) =>
               [
@@ -1408,9 +1410,10 @@ export class BaileysStartupService extends ChannelStartupService {
           continue;
         }
 
-        if (key.remoteJid?.includes('@lid') && key.senderPn) {
-          key.remoteJid = key.senderPn;
-        }
+        // LID handling removed in baileys 7.0.0-rc.6
+        // if (key.remoteJid?.includes('@lid') && key.senderPn) {
+        //   key.remoteJid = key.senderPn;
+        // }
 
         const updateKey = `${this.instance.id}_${key.id}_${update.status}`;
 
@@ -1713,7 +1716,7 @@ export class BaileysStartupService extends ChannelStartupService {
           }
 
           if (events['group-participants.update']) {
-            const payload = events['group-participants.update'];
+            const payload = events['group-participants.update'] as any;
             this.groupHandler['group-participants.update'](payload);
           }
         }
@@ -1908,7 +1911,7 @@ export class BaileysStartupService extends ChannelStartupService {
         quoted,
       });
       const id = await this.client.relayMessage(sender, message, { messageId });
-      m.key = { id: id, remoteJid: sender, participant: isJidUser(sender) ? sender : undefined, fromMe: true };
+      m.key = { id: id, remoteJid: sender, participant: isPnUser(sender) ? sender : undefined, fromMe: true };
       for (const [key, value] of Object.entries(m)) {
         if (!value || (isArray(value) && value.length) === 0) {
           delete m[key];
@@ -2077,7 +2080,7 @@ export class BaileysStartupService extends ChannelStartupService {
       if (options?.quoted) {
         const m = options?.quoted;
 
-        const msg = m?.message ? m : ((await this.getMessage(m.key, true)) as proto.IWebMessageInfo);
+        const msg = m?.message ? m : ((await this.getMessage(m.key, true)) as WAMessage);
 
         if (msg) {
           quoted = msg;
@@ -3283,8 +3286,8 @@ export class BaileysStartupService extends ChannelStartupService {
 
           const numberJid = numberVerified?.jid || user.jid;
           const lid =
-            typeof numberVerified?.lid === 'string'
-              ? numberVerified.lid
+            typeof (numberVerified as any)?.lid === 'string'
+              ? (numberVerified as any).lid
               : numberJid.includes('@lid')
                 ? numberJid.split('@')[1]
                 : undefined;
@@ -3331,7 +3334,7 @@ export class BaileysStartupService extends ChannelStartupService {
     try {
       const keys: proto.IMessageKey[] = [];
       data.readMessages.forEach((read) => {
-        if (isJidGroup(read.remoteJid) || isJidUser(read.remoteJid)) {
+        if (isJidGroup(read.remoteJid) || isPnUser(read.remoteJid)) {
           keys.push({ remoteJid: read.remoteJid, fromMe: read.fromMe, id: read.id });
         }
       });
@@ -3531,7 +3534,7 @@ export class BaileysStartupService extends ChannelStartupService {
       const m = data?.message;
       const convertToMp4 = data?.convertToMp4 ?? false;
 
-      const msg = m?.message ? m : ((await this.getMessage(m.key, true)) as proto.IWebMessageInfo);
+      const msg = m?.message ? m : ((await this.getMessage(m.key, true)) as WAMessage);
 
       if (!msg) {
         throw 'Message not found';
@@ -4291,7 +4294,7 @@ export class BaileysStartupService extends ChannelStartupService {
     throw new Error('Method not available in the Baileys service');
   }
 
-  private prepareMessage(message: proto.IWebMessageInfo): any {
+  private prepareMessage(message: WAMessage): any {
     const contentType = getContentType(message.message);
     const contentMsg = message?.message[contentType] as any;
 
@@ -4465,7 +4468,8 @@ export class BaileysStartupService extends ChannelStartupService {
   }
 
   public async baileysAssertSessions(jids: string[], force: boolean) {
-    const response = await this.client.assertSessions(jids, force);
+    // Force parameter removed in baileys 7.0.0-rc.6
+    const response = await this.client.assertSessions(jids);
 
     return response;
   }
